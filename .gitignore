@@ -1,0 +1,11 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+build/
+.dart_tool/
+.flutter-plugins*
+supabase/.temp/
+supabase/.branches/
