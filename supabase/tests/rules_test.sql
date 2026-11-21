@@ -127,3 +127,30 @@ end $$;
 reset role;
 select 'ALL TESTS PASSED' as result;
 rollback;
+
+-- =====================================================================
+-- Communes
+-- =====================================================================
+begin;
+do $$ begin
+  if (select count(*) from wilayas) <> 69 then raise exception 'FAIL C1: wilayas'; end if;
+  if (select count(*) from communes) <> 1541 then raise exception 'FAIL C2: communes'; end if;
+  if exists (select 1 from wilaya_summary where communes = 0) then raise exception 'FAIL C3: wilaya without commune'; end if;
+  if (select communes from wilaya_summary where code = 68) <> 23 then raise exception 'FAIL C4: Bou Saada'; end if;
+  if (select wilaya_code from communes where name_fr = 'Bou Saada') <> 68 then raise exception 'FAIL C5: moved commune'; end if;
+end $$;
+insert into auth.users values ('00000000-0000-0000-0000-0000000000e1');
+insert into profiles (id, full_name, phone, wilaya_code) values ('00000000-0000-0000-0000-0000000000e1','تست','+213660000001',42);
+do $$ begin
+  begin
+    insert into listings (owner_id, kind, title, price_dzd, wilaya_code, commune_id)
+      values ('00000000-0000-0000-0000-0000000000e1','car','Clio 2016',1500000,42,
+              (select id from communes where wilaya_code = 16 limit 1));
+    raise exception 'FAIL C6: commune outside wilaya accepted';
+  exception when raise_exception then if sqlerrm like 'FAIL%' then raise; end if; end;
+end $$;
+insert into listings (owner_id, kind, title, price_dzd, wilaya_code, commune_id)
+  values ('00000000-0000-0000-0000-0000000000e1','car','Clio 2016',1500000,42,
+          (select id from communes where wilaya_code = 42 and name_fr ilike 'Cherchell%' limit 1));
+select 'COMMUNE TESTS PASSED' as result;
+rollback;
