@@ -22,8 +22,7 @@
 
 ```bash
 supabase link --project-ref <PROJECT_REF>
-supabase db push                       # يطبّق ملفات supabase/migrations
-psql "$DATABASE_URL" -f supabase/seed.sql   # الولايات الـ 69
+supabase db push        # يطبّق ملفات supabase/migrations (فيها 69 ولاية و1541 بلدية)
 ```
 
 3. عيّن أول مدير يدوياً (مرة واحدة) من محرر SQL في Supabase:
